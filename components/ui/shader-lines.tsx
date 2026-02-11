@@ -16,15 +16,21 @@ export function ShaderAnimation() {
     const scene = new THREE.Scene()
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
     
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
-    renderer.setPixelRatio(window.devicePixelRatio)
+    // Optimization: Disable antialias for background effect
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false })
+    
+    // Aggressive Performance Optimization for Mobile
+    const isMobile = window.innerWidth < 768;
+    const pixelRatio = isMobile ? 1 : Math.min(window.devicePixelRatio, 2);
+    
+    renderer.setPixelRatio(pixelRatio)
     renderer.setSize(container.clientWidth, container.clientHeight)
     container.appendChild(renderer.domElement)
 
     // Uniforms
     const uniforms = {
       time: { value: 1.0 },
-      resolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) },
+      resolution: { value: new THREE.Vector2(container.clientWidth * pixelRatio, container.clientHeight * pixelRatio) },
     }
 
     // Vertex Shader
@@ -89,10 +95,15 @@ export function ShaderAnimation() {
 
     // Resize Handler
     const handleResize = () => {
-      if (!container) return
-      renderer.setSize(container.clientWidth, container.clientHeight)
-      uniforms.resolution.value.x = container.clientWidth
-      uniforms.resolution.value.y = container.clientHeight
+      if (!container) return;
+      
+      const newIsMobile = window.innerWidth < 768;
+      const newPixelRatio = newIsMobile ? 1 : Math.min(window.devicePixelRatio, 2);
+      
+      renderer.setPixelRatio(newPixelRatio);
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      uniforms.resolution.value.x = container.clientWidth * newPixelRatio;
+      uniforms.resolution.value.y = container.clientHeight * newPixelRatio;
     }
 
     window.addEventListener("resize", handleResize)

@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { GradientButton } from './ui/gradient-button';
 
-// --- INTERACTIVE TEXT COMPONENT (Slow "Trapped Ball" Focus) ---
+// --- INTERACTIVE TEXT COMPONENT (Optimized for Mobile) ---
 interface InteractiveTextProps {
   text: string;
   className?: string;
@@ -17,7 +17,7 @@ const InteractiveText: React.FC<InteractiveTextProps> = ({
   className = "", 
   maxBlur = 8, 
   radius = 80,
-  lag = 0.08, // Very slow/heavy movement by default
+  lag = 0.08, 
   containerClass = ""
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -29,8 +29,27 @@ const InteractiveText: React.FC<InteractiveTextProps> = ({
   // The "Ball" current position (Interpolated)
   const ballRef = useRef({ x: 0, y: 0 });
   const isFirstFrame = useRef(true);
+  
+  // Detect mobile to disable effect
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Check if mobile (screen width < 768px or touch device)
+    const checkMobile = () => {
+      const isTouch = window.matchMedia('(pointer: coarse)').matches;
+      const isSmallScreen = window.innerWidth < 768;
+      setIsMobile(isTouch || isSmallScreen);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    // If mobile, do NOT run the animation loop to save battery and performance
+    if (isMobile) return;
+
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY };
     };
@@ -58,12 +77,10 @@ const InteractiveText: React.FC<InteractiveTextProps> = ({
         }
 
         // 2. Calculate Target Point (Clamped within bounds)
-        // This is where the ball *wants* to go
         const targetX = Math.max(rect.left, Math.min(mouseRef.current.x, rect.right));
         const targetY = Math.max(rect.top, Math.min(mouseRef.current.y, rect.bottom));
 
         // 3. Interpolate Ball Position (The "Slowness" logic)
-        // Move current ball position slightly towards target
         ballRef.current.x += (targetX - ballRef.current.x) * lag;
         ballRef.current.y += (targetY - ballRef.current.y) * lag;
 
@@ -88,19 +105,17 @@ const InteractiveText: React.FC<InteractiveTextProps> = ({
           let blurAmount = 0;
           
           if (dist < radius) {
-            // Normalize distance (0 to 1)
             const normalizedDist = dist / radius;
-            // Smooth easing (Bell curve-ish)
             const intensity = Math.max(0, 1 - normalizedDist);
             blurAmount = intensity * maxBlur;
           }
 
-          // Apply styles
+          // Apply styles directly
           if (blurAmount > 0.1) {
             span.style.filter = `blur(${blurAmount.toFixed(2)}px)`;
-            // Subtle opacity change
-            span.style.opacity = `${1 - (blurAmount / maxBlur) * 0.2}`; // Slight dimming on blur
+            span.style.opacity = `${1 - (blurAmount / maxBlur) * 0.2}`;
           } else {
+            // Reset if needed
             span.style.filter = 'none';
             span.style.opacity = '1';
           }
@@ -115,8 +130,15 @@ const InteractiveText: React.FC<InteractiveTextProps> = ({
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrameId);
+      // Ensure styles are reset when unmounting/disabling
+      lettersRef.current.forEach(span => {
+        if(span) {
+           span.style.filter = 'none';
+           span.style.opacity = '1';
+        }
+      });
     };
-  }, [maxBlur, radius, lag]);
+  }, [maxBlur, radius, lag, isMobile]);
 
   return (
     <div ref={containerRef} className={`relative inline-block cursor-default ${containerClass}`}>
@@ -126,10 +148,9 @@ const InteractiveText: React.FC<InteractiveTextProps> = ({
           ref={(el) => { lettersRef.current[i] = el; }}
           className={`inline-block ${className}`}
           style={{ 
-            willChange: 'filter, opacity',
+            willChange: isMobile ? 'auto' : 'filter, opacity', // Don't hint will-change on mobile
             padding: '0em', 
             margin: '0em',
-            // No CSS transition here because we are doing physics in JS
             whiteSpace: 'pre'
           }}
         >
@@ -145,39 +166,37 @@ const Hero: React.FC = () => {
   return (
     <section className="relative h-screen w-full flex flex-col items-center justify-start bg-black overflow-hidden">
       
-      {/* 1. Background Video Container - Full Height */}
+      {/* 1. Background Video Container */}
       <div className="absolute top-0 left-0 w-full h-full z-0 overflow-hidden">
-        <div className="absolute inset-0 bg-black/30 z-10" /> {/* Overlay for contrast */}
+        <div className="absolute inset-0 bg-black/30 z-10" />
         <video 
           autoPlay 
           loop 
           muted 
           playsInline 
           className="w-full h-full object-cover opacity-80"
+          style={{ willChange: "transform" }} // Hints browser to optimize video layer
         >
           <source src="https://res.cloudinary.com/dsmdtfbfd/video/upload/v1770768527/video_20260210_181218_edit_o8xisv.mp4" type="video/mp4" />
         </video>
-        {/* Gradient fade at bottom of video to merge slightly with the black bar */}
         <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-black via-black/60 to-transparent z-10 pointer-events-none" />
       </div>
 
       {/* 2. Main Content */}
       <div className="relative z-20 flex flex-col items-center w-full h-full pointer-events-none">
         
-        {/* H1 - Massive Title with SLOW TRAPPED BALL BLUR */}
+        {/* H1 */}
         <div className="absolute top-[15%] w-full flex justify-center pointer-events-auto mix-blend-screen scale-y-110 origin-center opacity-90">
              <InteractiveText 
                 text="BKC"
-                maxBlur={12} // Reduced blur (subtle)
-                radius={140} // Small "ball" size relative to huge text
-                lag={0.05} // VERY slow movement (heavy fluid feel)
-                // CHANGED: Added metallic asphalt gradient (white -> zinc-600)
+                maxBlur={12} 
+                radius={140} 
+                lag={0.05} 
                 className="font-['Space_Grotesk'] font-medium bg-gradient-to-b from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent leading-[0.85] tracking-tight text-[clamp(7rem,28vw,22rem)] select-none"
             />
         </div>
 
-        {/* Subtitle - Now with Interactive Blur Effect */}
-        {/* Gap minimized to almost zero with slight margin (gap-0 mobile, gap-2px desktop) */}
+        {/* Subtitle */}
         <div className="absolute top-[68%] w-full pointer-events-auto z-20 flex flex-col items-center gap-0 md:gap-[2px]">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -185,13 +204,11 @@ const Hero: React.FC = () => {
                 transition={{ duration: 1, delay: 0.2 }}
                 className="text-center"
             >
-                {/* Applied InteractiveText to subtitle line 1 */}
                 <InteractiveText 
                     text="Tus ideas más ambiciosas"
-                    maxBlur={3} // Less blur for smaller text to keep it somewhat readable
-                    radius={60} // Smaller ball
-                    lag={0.1} // Slightly faster reaction than title
-                    // CHANGED: Added Gradient & changed font-light to font-normal
+                    maxBlur={3} 
+                    radius={60} 
+                    lag={0.1} 
                     className="font-['Space_Grotesk'] bg-gradient-to-b from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent text-[1.425rem] md:text-[1.9rem] tracking-wide font-normal"
                 />
             </motion.div>
@@ -199,23 +216,20 @@ const Hero: React.FC = () => {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 0.9, y: 0 }}
-                transition={{ duration: 1, delay: 0.4 }} // Slight delay for second line
+                transition={{ duration: 1, delay: 0.4 }} 
                 className="text-center"
             >
-                {/* Applied InteractiveText to subtitle line 2 */}
                 <InteractiveText 
                     text="se materializan en BKC"
                     maxBlur={3}
                     radius={60}
                     lag={0.1}
-                    // CHANGED: Added Gradient & changed font-light to font-normal
                     className="font-['Space_Grotesk'] bg-gradient-to-b from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent text-[1.18rem] md:text-[1.66rem] tracking-wide font-normal"
                 />
             </motion.div>
         </div>
 
         {/* CTA Button */}
-        {/* Scale reduced by 10% (0.9 -> 0.81) */}
         <motion.div
             initial={{ opacity: 0, scale: 0.7 }}
             animate={{ opacity: 1, scale: 0.81 }} 

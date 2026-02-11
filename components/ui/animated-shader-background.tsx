@@ -11,16 +11,20 @@ const AnimatedShaderBackground = () => {
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    // Initial size
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false }); // Disable antialias for performance
+    
+    // Aggressive Performance Optimization for Mobile
+    const isMobile = window.innerWidth < 768;
+    const pixelRatio = isMobile ? 1 : Math.min(window.devicePixelRatio, 2);
+    
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // optimize for performance
+    renderer.setPixelRatio(pixelRatio);
     container.appendChild(renderer.domElement);
 
     const material = new THREE.ShaderMaterial({
       uniforms: {
         iTime: { value: 0 },
-        iResolution: { value: new THREE.Vector2(container.clientWidth, container.clientHeight) }
+        iResolution: { value: new THREE.Vector2(container.clientWidth * pixelRatio, container.clientHeight * pixelRatio) }
       },
       vertexShader: `
         void main() {
@@ -69,6 +73,8 @@ const AnimatedShaderBackground = () => {
 
           float f = 2.0 + fbm(p + vec2(iTime * 5.0, 0.0)) * 0.5;
 
+          // Reduced loop count for performance if needed, but keeping visual quality for now
+          // as pixelRatio is already capped.
           for (float i = 0.0; i < 35.0; i++) {
             v = p + cos(i * i + (iTime + p.x * 0.08) * 0.025 + i * vec2(13.0, 11.0)) * 3.5 + vec2(sin(iTime * 3.0 + i) * 0.003, cos(iTime * 3.5 - i) * 0.003);
             float tailNoise = fbm(v + vec2(iTime * 0.5, i)) * 0.3 * (1.0 - (i / 35.0));
@@ -109,8 +115,12 @@ const AnimatedShaderBackground = () => {
         if (!containerRef.current) return;
         const newWidth = containerRef.current.clientWidth;
         const newHeight = containerRef.current.clientHeight;
+        const newIsMobile = window.innerWidth < 768;
+        const newPixelRatio = newIsMobile ? 1 : Math.min(window.devicePixelRatio, 2);
+        
+        renderer.setPixelRatio(newPixelRatio);
         renderer.setSize(newWidth, newHeight);
-        material.uniforms.iResolution.value.set(newWidth, newHeight);
+        material.uniforms.iResolution.value.set(newWidth * newPixelRatio, newHeight * newPixelRatio);
     };
     
     window.addEventListener('resize', handleResize);

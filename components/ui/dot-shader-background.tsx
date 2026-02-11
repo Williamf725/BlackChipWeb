@@ -1,9 +1,20 @@
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { Canvas, useFrame, useThree, extend } from '@react-three/fiber'
 import { shaderMaterial, useTrailTexture } from '@react-three/drei'
 import * as THREE from 'three'
+
+// Fix for R3F elements in TypeScript
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      mesh: any
+      planeGeometry: any
+      dotMaterial: any
+    }
+  }
+}
 
 // Define the shader material
 const DotMaterial = shaderMaterial(
@@ -112,7 +123,7 @@ function Scene() {
   }
 
   const rotation = 0
-  const gridSize = 80 // Slightly larger grid for footer
+  const gridSize = 80 
 
   const [trail, onMove] = useTrailTexture({
     size: 512,
@@ -136,11 +147,8 @@ function Scene() {
   const scale = Math.max(viewport.width, viewport.height) / 2
 
   return (
-    // @ts-ignore
     <mesh scale={[scale, scale, 1]} onPointerMove={onMove}>
-      {/* @ts-ignore */}
       <planeGeometry args={[2, 2]} />
-      {/* @ts-ignore */}
       <dotMaterial
         ref={materialRef}
         resolution={new THREE.Vector2(size.width * viewport.dpr, size.height * viewport.dpr)}
@@ -158,9 +166,19 @@ function Scene() {
 }
 
 export const DotScreenShader = () => {
+  // Mobile check for initial render
+  const [dpr, setDpr] = useState(1); // Default to low res for safety
+
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    // Set appropriate DPR: 1 for mobile, clamp(1, 2) for desktop
+    setDpr(isMobile ? 1 : Math.min(window.devicePixelRatio, 2));
+  }, []);
+
   return (
     <div className="w-full h-full">
         <Canvas
+        dpr={dpr}
         gl={{
             antialias: true,
             powerPreference: 'high-performance',

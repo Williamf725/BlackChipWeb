@@ -2,7 +2,7 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Black Chip | Hacemos Tus Ideas Realidad</title>
     <!-- We keep the CDN for Tailwind for simplicity, though a build step is recommended later -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,10 +19,11 @@
       .font-playfair {
         font-family: 'Playfair Display', serif;
       }
-      /* Smooth scrolling */
+      /* Smooth scrolling only on desktop to avoid mobile lag */
       html {
         scroll-behavior: smooth;
       }
+      
       /* Custom scrollbar */
       ::-webkit-scrollbar {
         width: 8px;
@@ -37,10 +38,45 @@
       ::-webkit-scrollbar-thumb:hover {
         background: #3f3f46; 
       }
+      
       .glass-panel {
         background: rgba(255, 255, 255, 0.03);
         backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      /* AGGRESSIVE MOBILE OPTIMIZATION */
+      @media (max-width: 768px) {
+        /* Disable heavy backdrop filters on mobile */
+        .glass-panel, 
+        .backdrop-blur-md, 
+        .backdrop-blur-sm, 
+        .backdrop-blur-xl,
+        nav {
+          backdrop-filter: none !important;
+          -webkit-backdrop-filter: none !important;
+        }
+
+        /* Fallback backgrounds for readability when blur is removed */
+        .glass-panel {
+          background: rgba(20, 20, 20, 0.95) !important;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        nav.backdrop-blur-md {
+          background-color: rgba(0, 0, 0, 0.9) !important;
+        }
+
+        /* Disable smooth scroll on mobile if it causes stuttering */
+        html {
+          scroll-behavior: auto;
+        }
+
+        /* Optimize video/images */
+        video {
+          will-change: transform;
+        }
       }
     </style>
   <script type="importmap">

@@ -47,19 +47,23 @@ const Hero: React.FC = () => {
           loop
           muted
           playsInline
-          className="w-full h-full object-cover opacity-50" 
+          className="w-full h-full object-cover brightness-110" // Brighter, no opacity
         >
           <source src="https://res.cloudinary.com/dsmdtfbfd/video/upload/v1770768527/video_20260210_181218_edit_o8xisv.mp4" type="video/mp4" />
         </motion.video>
         
-        {/* Gradients to ensure text readability against video */}
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-black via-black/80 to-transparent" />
+        {/* Blur Transition Layer */}
+        {/* Starts clear and becomes blurry towards the bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-[40vh] backdrop-blur-[6px] [mask-image:linear-gradient(to_bottom,transparent_0%,black_100%)] z-10" />
+
+        {/* Gradient to Black Layer */}
+        {/* Ensures smooth transition to the next section (solid black) */}
+        <div className="absolute bottom-0 left-0 right-0 h-[30vh] bg-gradient-to-t from-black via-black/80 to-transparent z-20" />
       </div>
 
       {/* Main Interactive Content */}
       <motion.div 
-        className="relative z-20 container mx-auto px-4 text-center transform-style-3d cursor-default"
+        className="relative z-30 container mx-auto px-4 text-center transform-style-3d cursor-default"
         style={{ 
           rotateX, 
           rotateY,
@@ -82,7 +86,7 @@ const Hero: React.FC = () => {
                     backgroundClip: 'text',
                     WebkitBackgroundClip: 'text',
                     color: 'transparent',
-                    filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.5))'
+                    filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.8))' // Increased shadow for contrast
                   }}
                 >
                   BKC
@@ -93,7 +97,7 @@ const Hero: React.FC = () => {
                     className="mt-4 text-[1.2rem] md:text-[2.4rem] font-outfit font-bold tracking-tight uppercase"
                     style={{
                         color: '#d4d4d8', // Zinc-300 (Light Grey)
-                        textShadow: '0 2px 10px rgba(0,0,0,0.5)'
+                        textShadow: '0 2px 10px rgba(0,0,0,0.8)' // Increased shadow
                     }}
                 >
                     Hacemos tus ideas realidad
@@ -125,4 +129,19 @@ const Hero: React.FC = () => {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1
+        transition={{ delay: 1.5, duration: 1 }}
+        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-40 cursor-pointer text-zinc-500 hover:text-white transition-colors"
+        onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
+      >
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <ChevronDown className="w-8 h-8 drop-shadow-lg" />
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+};
+
+export default Hero;

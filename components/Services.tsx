@@ -1,27 +1,15 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { SERVICES } from '../constants';
-
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2
-    }
-  }
-};
-
-const item = {
-  hidden: { opacity: 0, y: 30 },
-  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 50 } }
-};
+import { GlowingEffect } from './ui/glowing-effect';
+import { cn } from '../lib/utils';
+import { ServiceItem } from '../types';
 
 const Services: React.FC = () => {
   return (
     <section id="services" className="py-32 bg-black relative overflow-hidden">
-      {/* Decorative background element */}
-      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-blue-900/10 blur-[120px] rounded-full pointer-events-none" />
+      {/* Decorative background element - Darkened for high contrast with glowing cards */}
+      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-zinc-900/20 blur-[120px] rounded-full pointer-events-none" />
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-24">
@@ -45,40 +33,57 @@ const Services: React.FC = () => {
           </motion.p>
         </div>
 
-        <motion.div 
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
+        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {SERVICES.map((service, index) => (
-            <motion.div
-              key={service.title}
-              variants={item}
-              whileHover={{ y: -10 }}
-              className="group relative p-10 rounded-3xl bg-zinc-900/30 border border-white/5 hover:border-white/20 transition-all duration-500 overflow-hidden backdrop-blur-sm"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
-              <div className="relative z-10 flex flex-col items-start h-full">
-                <div className="mb-8 p-4 rounded-2xl bg-zinc-900 border border-white/10 group-hover:border-white/30 group-hover:bg-white/10 transition-colors duration-300">
-                  <service.icon className="w-8 h-8 text-white" />
-                </div>
-                
-                <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-zinc-100 transition-colors">
-                  {service.title}
-                </h3>
-                
-                <p className="text-zinc-500 leading-relaxed group-hover:text-zinc-300 transition-colors">
-                  {service.description}
-                </p>
-              </div>
-            </motion.div>
+            <ServiceCard key={service.title} service={service} index={index} />
           ))}
-        </motion.div>
+        </ul>
       </div>
     </section>
+  );
+};
+
+interface ServiceCardProps {
+  service: ServiceItem;
+  index: number;
+}
+
+const ServiceCard = ({ service, index }: ServiceCardProps) => {
+  return (
+    <motion.li 
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.1, duration: 0.5 }}
+      className="list-none min-h-[14rem] h-full"
+    >
+      <div className="relative h-full rounded-[1.25rem] border border-white/10 p-2 md:rounded-[1.5rem] md:p-3 bg-zinc-950/30">
+        <GlowingEffect
+          spread={40}
+          glow={true}
+          disabled={false}
+          proximity={64}
+          inactiveZone={0.01}
+          borderWidth={2}
+          variant="default" // Using customized gold/silver default variant
+        />
+        <div className="relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl border border-white/5 bg-zinc-900/50 p-6 shadow-sm transition-colors hover:bg-zinc-900/80">
+          <div className="relative flex flex-1 flex-col justify-between gap-3">
+            <div className="w-fit rounded-lg border border-white/10 bg-black/50 p-3 shadow-inner">
+              <service.icon className="h-6 w-6 text-white" />
+            </div>
+            <div className="space-y-3 mt-4">
+              <h3 className="pt-0.5 text-2xl leading-tight font-bold font-['Space_Grotesk'] tracking-tight text-white">
+                {service.title}
+              </h3>
+              <p className="font-sans text-sm leading-relaxed text-zinc-400">
+                {service.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.li>
   );
 };
 

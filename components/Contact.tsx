@@ -1,24 +1,30 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, ArrowRight, Send } from 'lucide-react';
+import { ShaderAnimation } from './ui/shader-lines';
 
 const Contact: React.FC = () => {
   return (
-    <section id="contact" className="py-32 bg-black relative">
-       {/* Decorative Lines */}
-      <div className="absolute left-0 bottom-0 w-full h-px bg-gradient-to-r from-transparent via-zinc-800 to-transparent"></div>
+    <section id="contact" className="py-24 bg-black relative overflow-hidden">
+       {/* 1. New Shader Background */}
+      <div className="absolute inset-0 z-0 opacity-40">
+        <ShaderAnimation />
+      </div>
+      
+      {/* Dark overlay to ensure the shader doesn't overpower the content */}
+      <div className="absolute inset-0 bg-black/50 z-0 pointer-events-none" />
 
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="max-w-6xl mx-auto rounded-[2.5rem] overflow-hidden bg-zinc-900/50 backdrop-blur-sm border border-white/5 flex flex-col lg:flex-row shadow-2xl"
+          className="max-w-5xl mx-auto rounded-[2.5rem] overflow-hidden bg-zinc-900/50 backdrop-blur-md border border-white/5 flex flex-col lg:flex-row shadow-2xl"
         >
           
           {/* Info Side */}
-          <div className="bg-white text-black p-12 lg:p-16 lg:w-2/5 flex flex-col justify-between relative overflow-hidden">
+          <div className="bg-white text-black p-10 lg:p-12 lg:w-2/5 flex flex-col justify-between relative overflow-hidden">
             <div className="absolute -right-10 -bottom-10 text-9xl font-black text-zinc-100 select-none pointer-events-none tracking-tighter opacity-50">
                BKC
             </div>
@@ -62,8 +68,8 @@ const Contact: React.FC = () => {
           </div>
 
           {/* Form Side */}
-          <div className="p-12 lg:p-16 lg:w-3/5 bg-zinc-950/80">
-            <form className="space-y-8">
+          <div className="p-10 lg:p-12 lg:w-3/5 bg-zinc-950/80 relative">
+            <form className="space-y-8 relative z-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="group">
                   <label className="block text-xs uppercase tracking-widest text-zinc-500 font-bold mb-3 group-focus-within:text-white transition-colors">Nombre</label>

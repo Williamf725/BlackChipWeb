@@ -1,15 +1,21 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Instagram, Twitter, Linkedin } from 'lucide-react';
+import { DotScreenShader } from './ui/dot-shader-background';
 
 const Footer: React.FC = () => {
   return (
     <footer className="bg-black border-t border-white/10 pt-20 pb-10 overflow-hidden relative">
-      {/* Ambient background glow for footer */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-lg h-32 bg-zinc-900/50 blur-[100px] pointer-events-none" />
+      {/* 1. Background Shader Effect */}
+      <div className="absolute inset-0 z-0 opacity-60">
+        <DotScreenShader />
+      </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+      {/* Ambient background glow for footer (kept as secondary overlay) */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-lg h-32 bg-zinc-900/50 blur-[100px] pointer-events-none z-0" />
+
+      <div className="container mx-auto px-4 relative z-10 pointer-events-none">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16 pointer-events-auto">
           <div className="col-span-1 md:col-span-2">
             
             {/* Large Animated Logo */}
@@ -84,7 +90,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
         
-        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 pointer-events-auto">
           <p className="text-zinc-600 text-xs text-center md:text-left uppercase tracking-wider">
             © {new Date().getFullYear()} Black Chip (BKC). Todos los derechos reservados.
           </p>

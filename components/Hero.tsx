@@ -1,145 +1,238 @@
-import React from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { ChevronDown } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { GradientButton } from './ui/gradient-button';
 
-const Hero: React.FC = () => {
-  // Mouse position state for 3D parallax
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
+// --- INTERACTIVE TEXT COMPONENT (Slow "Trapped Ball" Focus) ---
+interface InteractiveTextProps {
+  text: string;
+  className?: string;
+  maxBlur?: number; // Maximum blur intensity in px
+  radius?: number; // Radius of the "spot" in px
+  lag?: number; // 0 to 1 (lower is slower/heavier)
+  containerClass?: string;
+}
 
-  // Smooth spring animation for the tilt
-  const mouseX = useSpring(x, { stiffness: 40, damping: 30 });
-  const mouseY = useSpring(y, { stiffness: 40, damping: 30 });
-
-  function handleMouseMove(event: React.MouseEvent<HTMLElement>) {
-    const { clientX, clientY, currentTarget } = event;
-    const { width, height, left, top } = currentTarget.getBoundingClientRect();
-    
-    // Calculate normalized position (-1 to 1) for tilt
-    const xPos = ((clientX - left) / width - 0.5) * 2;
-    const yPos = ((clientY - top) / height - 0.5) * 2;
-
-    x.set(xPos);
-    y.set(yPos);
-  }
-
-  // Transform for the 3D tilt
-  const rotateX = useTransform(mouseY, [-1, 1], [5, -5]); 
-  const rotateY = useTransform(mouseX, [-1, 1], [-5, 5]);
+const InteractiveText: React.FC<InteractiveTextProps> = ({ 
+  text, 
+  className = "", 
+  maxBlur = 8, 
+  radius = 80,
+  lag = 0.08, // Very slow/heavy movement by default
+  containerClass = ""
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const lettersRef = useRef<(HTMLSpanElement | null)[]>([]);
   
-  const contentX = useTransform(mouseX, [-1, 1], [-20, 20]);
-  const contentY = useTransform(mouseY, [-1, 1], [-20, 20]);
+  // Mouse position (Target)
+  const mouseRef = useRef({ x: 0, y: 0 });
+  
+  // The "Ball" current position (Interpolated)
+  const ballRef = useRef({ x: 0, y: 0 });
+  const isFirstFrame = useRef(true);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseRef.current = { x: e.clientX, y: e.clientY };
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    let animationFrameId: number;
+
+    const loop = () => {
+      if (containerRef.current) {
+        // 1. Get Boundaries (The "Trap")
+        const rect = containerRef.current.getBoundingClientRect();
+
+        // Initialize ball position to center of text on first frame to avoid flying in
+        if (isFirstFrame.current) {
+            ballRef.current = { 
+                x: rect.left + rect.width / 2, 
+                y: rect.top + rect.height / 2 
+            };
+            mouseRef.current = { // Also set mouse ref to avoid initial jump
+                x: rect.left + rect.width / 2, 
+                y: rect.top + rect.height / 2 
+            };
+            isFirstFrame.current = false;
+        }
+
+        // 2. Calculate Target Point (Clamped within bounds)
+        // This is where the ball *wants* to go
+        const targetX = Math.max(rect.left, Math.min(mouseRef.current.x, rect.right));
+        const targetY = Math.max(rect.top, Math.min(mouseRef.current.y, rect.bottom));
+
+        // 3. Interpolate Ball Position (The "Slowness" logic)
+        // Move current ball position slightly towards target
+        ballRef.current.x += (targetX - ballRef.current.x) * lag;
+        ballRef.current.y += (targetY - ballRef.current.y) * lag;
+
+        const virtualX = ballRef.current.x;
+        const virtualY = ballRef.current.y;
+
+        // 4. Apply Effect to each letter based on the Slow Ball position
+        lettersRef.current.forEach((span) => {
+          if (!span) return;
+          
+          const spanRect = span.getBoundingClientRect();
+          const spanCenterX = spanRect.left + spanRect.width / 2;
+          const spanCenterY = spanRect.top + spanRect.height / 2;
+
+          // Calculate distance from the Slow Ball to the Letter
+          const dist = Math.sqrt(
+            Math.pow(virtualX - spanCenterX, 2) + 
+            Math.pow(virtualY - spanCenterY, 2)
+          );
+
+          // 5. Calculate Blur Magnitude
+          let blurAmount = 0;
+          
+          if (dist < radius) {
+            // Normalize distance (0 to 1)
+            const normalizedDist = dist / radius;
+            // Smooth easing (Bell curve-ish)
+            const intensity = Math.max(0, 1 - normalizedDist);
+            blurAmount = intensity * maxBlur;
+          }
+
+          // Apply styles
+          if (blurAmount > 0.1) {
+            span.style.filter = `blur(${blurAmount.toFixed(2)}px)`;
+            // Subtle opacity change
+            span.style.opacity = `${1 - (blurAmount / maxBlur) * 0.2}`; // Slight dimming on blur
+          } else {
+            span.style.filter = 'none';
+            span.style.opacity = '1';
+          }
+        });
+      }
+
+      animationFrameId = requestAnimationFrame(loop);
+    };
+
+    animationFrameId = requestAnimationFrame(loop);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [maxBlur, radius, lag]);
 
   return (
-    <section 
-      id="hero" 
-      className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-black"
-      onMouseMove={handleMouseMove}
-      style={{ perspective: "1000px" }}
-    >
-      {/* Video Background */}
-      <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
-         <motion.video
-          initial={{ scale: 1.15 }}
-          animate={{ scale: 1.05 }}
-          transition={{ duration: 2, ease: "easeOut" }}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover brightness-110" // Brighter, no opacity
+    <div ref={containerRef} className={`relative inline-block cursor-default ${containerClass}`}>
+      {text.split('').map((char, i) => (
+        <span
+          key={i}
+          ref={(el) => { lettersRef.current[i] = el; }}
+          className={`inline-block ${className}`}
+          style={{ 
+            willChange: 'filter, opacity',
+            padding: '0em', 
+            margin: '0em',
+            // No CSS transition here because we are doing physics in JS
+            whiteSpace: 'pre'
+          }}
+        >
+          {char}
+        </span>
+      ))}
+    </div>
+  );
+};
+
+
+const Hero: React.FC = () => {
+  return (
+    <section className="relative h-screen w-full flex flex-col items-center justify-start bg-black overflow-hidden">
+      
+      {/* 1. Background Video Container - Full Height */}
+      <div className="absolute top-0 left-0 w-full h-full z-0 overflow-hidden">
+        <div className="absolute inset-0 bg-black/30 z-10" /> {/* Overlay for contrast */}
+        <video 
+          autoPlay 
+          loop 
+          muted 
+          playsInline 
+          className="w-full h-full object-cover opacity-80"
         >
           <source src="https://res.cloudinary.com/dsmdtfbfd/video/upload/v1770768527/video_20260210_181218_edit_o8xisv.mp4" type="video/mp4" />
-        </motion.video>
-        
-        {/* Blur Transition Layer */}
-        {/* Starts clear and becomes blurry towards the bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-[40vh] backdrop-blur-[6px] [mask-image:linear-gradient(to_bottom,transparent_0%,black_100%)] z-10" />
-
-        {/* Gradient to Black Layer */}
-        {/* Ensures smooth transition to the next section (solid black) */}
-        <div className="absolute bottom-0 left-0 right-0 h-[30vh] bg-gradient-to-t from-black via-black/80 to-transparent z-20" />
+        </video>
+        {/* Gradient fade at bottom of video to merge slightly with the black bar */}
+        <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-black via-black/60 to-transparent z-10 pointer-events-none" />
       </div>
 
-      {/* Main Interactive Content */}
-      <motion.div 
-        className="relative z-30 container mx-auto px-4 text-center transform-style-3d cursor-default"
-        style={{ 
-          rotateX, 
-          rotateY,
-          x: contentX,
-          y: contentY,
-          transformStyle: "preserve-3d" 
-        }}
-      >
-        <div className="relative inline-block py-10 px-4">
-          
-          <div className="flex flex-col items-center justify-center relative">
-            
-            {/* SINGLE LAYER: Static Elegant Style */}
-            <div className="relative z-10 select-none">
-                {/* BKC Title - Reduced Size (~10% smaller) */}
-                <h1 
-                  className="font-outfit font-black text-[6.5rem] md:text-[10.5rem] lg:text-[14.5rem] leading-[0.85] tracking-tighter"
-                  style={{ 
-                    backgroundImage: 'linear-gradient(180deg, #FFFFFF 20%, #94a3b8 100%)', // Silver Metal
-                    backgroundClip: 'text',
-                    WebkitBackgroundClip: 'text',
-                    color: 'transparent',
-                    filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.8))' // Increased shadow for contrast
-                  }}
-                >
-                  BKC
-                </h1>
-                
-                {/* SUBTITLE - Reduced Size (~10% smaller) */}
-                <h2 
-                    className="mt-4 text-[1.2rem] md:text-[2.4rem] font-outfit font-bold tracking-tight uppercase"
-                    style={{
-                        color: '#d4d4d8', // Zinc-300 (Light Grey)
-                        textShadow: '0 2px 10px rgba(0,0,0,0.8)' // Increased shadow
-                    }}
-                >
-                    Hacemos tus ideas realidad
-                </h2>
-            </div>
-            
-          </div>
-
-        </div>
+      {/* 2. Main Content */}
+      <div className="relative z-20 flex flex-col items-center w-full h-full pointer-events-none">
         
-        {/* Badge / Tagline */}
-        <motion.div 
-           initial={{ opacity: 0, y: 10 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ delay: 1, duration: 1 }}
-           className="mt-12 flex justify-center relative z-40"
-        >
-            <div className="px-6 py-2 rounded-full bg-black/40 backdrop-blur-md border border-white/5 hover:border-white/20 transition-colors cursor-pointer group">
-              <span className="text-[10px] md:text-xs font-bold tracking-[0.3em] text-zinc-400 uppercase flex items-center gap-2 group-hover:text-white transition-colors">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
-                Descubre el Futuro
-              </span>
-            </div>
-        </motion.div>
+        {/* H1 - Massive Title with SLOW TRAPPED BALL BLUR */}
+        <div className="absolute top-[15%] w-full flex justify-center pointer-events-auto mix-blend-screen scale-y-110 origin-center opacity-90">
+             <InteractiveText 
+                text="BKC"
+                maxBlur={12} // Reduced blur (subtle)
+                radius={140} // Small "ball" size relative to huge text
+                lag={0.05} // VERY slow movement (heavy fluid feel)
+                // CHANGED: Added metallic asphalt gradient (white -> zinc-600)
+                className="font-['Space_Grotesk'] font-medium bg-gradient-to-b from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent leading-[0.85] tracking-tight text-[clamp(7rem,28vw,22rem)] select-none"
+            />
+        </div>
 
-      </motion.div>
+        {/* Subtitle - Now with Interactive Blur Effect */}
+        {/* Gap minimized to almost zero with slight margin (gap-0 mobile, gap-2px desktop) */}
+        <div className="absolute top-[68%] w-full pointer-events-auto z-20 flex flex-col items-center gap-0 md:gap-[2px]">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 0.9, y: 0 }}
+                transition={{ duration: 1, delay: 0.2 }}
+                className="text-center"
+            >
+                {/* Applied InteractiveText to subtitle line 1 */}
+                <InteractiveText 
+                    text="Tus ideas más ambiciosas"
+                    maxBlur={3} // Less blur for smaller text to keep it somewhat readable
+                    radius={60} // Smaller ball
+                    lag={0.1} // Slightly faster reaction than title
+                    // CHANGED: Added Gradient & changed font-light to font-normal
+                    className="font-['Space_Grotesk'] bg-gradient-to-b from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent text-[1.425rem] md:text-[1.9rem] tracking-wide font-normal"
+                />
+            </motion.div>
+            
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 0.9, y: 0 }}
+                transition={{ duration: 1, delay: 0.4 }} // Slight delay for second line
+                className="text-center"
+            >
+                {/* Applied InteractiveText to subtitle line 2 */}
+                <InteractiveText 
+                    text="se materializan en BKC"
+                    maxBlur={3}
+                    radius={60}
+                    lag={0.1}
+                    // CHANGED: Added Gradient & changed font-light to font-normal
+                    className="font-['Space_Grotesk'] bg-gradient-to-b from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent text-[1.18rem] md:text-[1.66rem] tracking-wide font-normal"
+                />
+            </motion.div>
+        </div>
 
-      {/* Scroll Indicator */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-40 cursor-pointer text-zinc-500 hover:text-white transition-colors"
-        onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
-      >
+        {/* CTA Button */}
+        {/* Scale reduced by 10% (0.9 -> 0.81) */}
         <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            initial={{ opacity: 0, scale: 0.7 }}
+            animate={{ opacity: 1, scale: 0.81 }} 
+            whileHover={{ scale: 0.85 }}
+            whileTap={{ scale: 0.78 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="absolute top-[90%] pointer-events-auto"
         >
-          <ChevronDown className="w-8 h-8 drop-shadow-lg" />
+            <GradientButton asChild className="h-14 px-10 text-lg shadow-[0_0_50px_-10px_rgba(255,255,255,0.3)]">
+              <a href="#contact">
+                Comienza Ahora
+              </a>
+            </GradientButton>
         </motion.div>
-      </motion.div>
+
+      </div>
+
     </section>
   );
 };

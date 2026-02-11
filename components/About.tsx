@@ -1,23 +1,24 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, TrendingUp, ArrowUpRight } from 'lucide-react';
+import { CheckCircle2, ArrowUpRight } from 'lucide-react';
 import { STATS } from '../constants';
+import AnimatedShaderBackground from './ui/animated-shader-background';
 
 const About: React.FC = () => {
   return (
-    <section id="vision" className="py-32 bg-zinc-950 relative overflow-hidden">
-      {/* Background Decorative Elements */}
-      <motion.div 
-        animate={{ 
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.5, 0.3] 
-        }}
-        transition={{ duration: 10, repeat: Infinity }}
-        className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-white/5 rounded-full blur-[120px]" 
-      />
-      <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-indigo-900/10 rounded-full blur-[120px]" />
+    <section id="vision" className="py-32 bg-black relative overflow-hidden">
+      
+      {/* 1. Animated Shader Background (Behind Text) */}
+      <div className="absolute inset-0 z-0">
+         <AnimatedShaderBackground />
+         {/* Overlay to ensure text readability if shader is too bright */}
+         <div className="absolute inset-0 bg-black/70 z-10" /> 
+      </div>
 
-      <div className="container mx-auto px-4 relative z-10">
+      {/* Decorative Elements - Kept but made subtle to blend with shader */}
+      <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-indigo-900/10 rounded-full blur-[120px] z-0 mix-blend-screen" />
+
+      <div className="container mx-auto px-4 relative z-20">
         <div className="flex flex-col lg:flex-row items-center gap-20">
           
           {/* Left Content */}
@@ -38,10 +39,10 @@ const About: React.FC = () => {
 
             <h2 className="text-5xl md:text-7xl font-black leading-[0.9] tracking-tighter">
               MÁS QUE CÓDIGO. <br />
-              <span className="text-zinc-700">PURA ESTRATEGIA.</span>
+              <span className="text-zinc-500">PURA ESTRATEGIA.</span>
             </h2>
 
-            <p className="text-xl text-zinc-400 leading-relaxed font-light">
+            <p className="text-xl text-zinc-300 leading-relaxed font-light">
               En <span className="text-white font-bold">Black Chip (BKC)</span>, no solo programamos. Diseñamos el motor financiero de tu empresa. Tecnología de punta accesible, diseñada para convertir visitantes en clientes leales.
             </p>
 
@@ -59,12 +60,12 @@ const About: React.FC = () => {
                   viewport={{ once: true }}
                   className="flex items-start gap-5 group"
                 >
-                  <div className="p-2 rounded-lg bg-zinc-900 border border-zinc-800 group-hover:border-white/30 transition-colors">
+                  <div className="p-2 rounded-lg bg-zinc-900/80 border border-zinc-800 group-hover:border-white/30 transition-colors backdrop-blur-sm">
                      <CheckCircle2 className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <h4 className="text-white font-bold text-lg group-hover:text-zinc-200 transition-colors">{item.title}</h4>
-                    <p className="text-zinc-500 text-sm leading-relaxed">{item.desc}</p>
+                    <p className="text-zinc-400 text-sm leading-relaxed">{item.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -85,7 +86,7 @@ const About: React.FC = () => {
                 <motion.div 
                   key={i}
                   whileHover={{ y: -5, backgroundColor: "rgba(255,255,255,0.08)" }}
-                  className="glass-panel p-8 rounded-3xl flex flex-col items-center justify-center text-center cursor-default transition-all duration-300"
+                  className="glass-panel p-8 rounded-3xl flex flex-col items-center justify-center text-center cursor-default transition-all duration-300 bg-black/40"
                 >
                   <span className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tighter">
                     {stat.value}
@@ -99,7 +100,7 @@ const About: React.FC = () => {
             
             <motion.div 
               whileHover={{ scale: 1.02 }}
-              className="mt-6 p-8 bg-gradient-to-r from-zinc-900 to-black rounded-3xl border border-white/10 relative overflow-hidden group"
+              className="mt-6 p-8 bg-gradient-to-r from-zinc-900/80 to-black/80 rounded-3xl border border-white/10 relative overflow-hidden group backdrop-blur-md"
             >
                <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-40 transition-opacity">
                  <ArrowUpRight className="w-20 h-20 text-white" />

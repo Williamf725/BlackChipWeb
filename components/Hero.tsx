@@ -1,13 +1,11 @@
 import React from 'react';
-import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 
 const Hero: React.FC = () => {
-  // Mouse position state for 3D parallax and Spotlight effect
+  // Mouse position state for 3D parallax
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const mouseXPixel = useMotionValue(0);
-  const mouseYPixel = useMotionValue(0);
 
   // Smooth spring animation for the tilt
   const mouseX = useSpring(x, { stiffness: 40, damping: 30 });
@@ -23,10 +21,6 @@ const Hero: React.FC = () => {
 
     x.set(xPos);
     y.set(yPos);
-    
-    // Calculate precise pixel position for the spotlight mask
-    mouseXPixel.set(clientX - left);
-    mouseYPixel.set(clientY - top); 
   }
 
   // Transform for the 3D tilt
@@ -35,9 +29,6 @@ const Hero: React.FC = () => {
   
   const contentX = useTransform(mouseX, [-1, 1], [-20, 20]);
   const contentY = useTransform(mouseY, [-1, 1], [-20, 20]);
-
-  // The Mask: A radial gradient that reveals the COLOR layer under the mouse
-  const maskImage = useMotionTemplate`radial-gradient(250px circle at ${mouseXPixel}px ${mouseYPixel}px, black, transparent)`;
 
   return (
     <section 
@@ -81,14 +72,11 @@ const Hero: React.FC = () => {
           
           <div className="flex flex-col items-center justify-center relative">
             
-            {/* ==============================================
-                LAYER 1: BASE (ALWAYS VISIBLE)
-                Elegant White/Silver Metallic Style.
-               ============================================== */}
+            {/* SINGLE LAYER: Static Elegant Style */}
             <div className="relative z-10 select-none">
-                {/* BKC BASE */}
+                {/* BKC Title - Reduced Size (~10% smaller) */}
                 <h1 
-                  className="font-outfit font-black text-[7.2rem] md:text-[11.7rem] lg:text-[16.2rem] leading-[0.85] tracking-tighter"
+                  className="font-outfit font-black text-[6.5rem] md:text-[10.5rem] lg:text-[14.5rem] leading-[0.85] tracking-tighter"
                   style={{ 
                     backgroundImage: 'linear-gradient(180deg, #FFFFFF 20%, #94a3b8 100%)', // Silver Metal
                     backgroundClip: 'text',
@@ -100,9 +88,9 @@ const Hero: React.FC = () => {
                   BKC
                 </h1>
                 
-                {/* SUBTITLE BASE */}
+                {/* SUBTITLE - Reduced Size (~10% smaller) */}
                 <h2 
-                    className="mt-4 text-[1.35rem] md:text-[2.7rem] font-outfit font-bold tracking-tight uppercase"
+                    className="mt-4 text-[1.2rem] md:text-[2.4rem] font-outfit font-bold tracking-tight uppercase"
                     style={{
                         color: '#d4d4d8', // Zinc-300 (Light Grey)
                         textShadow: '0 2px 10px rgba(0,0,0,0.5)'
@@ -111,47 +99,6 @@ const Hero: React.FC = () => {
                     Hacemos tus ideas realidad
                 </h2>
             </div>
-
-            {/* ==============================================
-                LAYER 2: THE COLOR REVEAL (Interactive)
-                This layer sits strictly on top and is revealed by the mouse.
-                It contains the Vibrant Tech Colors.
-               ============================================== */}
-            <motion.div 
-                className="absolute inset-0 z-20 select-none pointer-events-none"
-                style={{ 
-                    maskImage,
-                    WebkitMaskImage: maskImage 
-                }}
-            >
-                {/* BKC COLORFUL */}
-                <h1 
-                  className="font-outfit font-black text-[7.2rem] md:text-[11.7rem] lg:text-[16.2rem] leading-[0.85] tracking-tighter"
-                  style={{ 
-                    backgroundImage: 'linear-gradient(to right, #3b82f6, #8b5cf6, #10b981)', // Blue -> Purple -> Green
-                    backgroundClip: 'text',
-                    WebkitBackgroundClip: 'text',
-                    color: 'transparent',
-                    filter: 'drop-shadow(0 0 30px rgba(139, 92, 246, 0.6))' // Glowing aura
-                  }}
-                >
-                  BKC
-                </h1>
-
-                {/* SUBTITLE COLORFUL */}
-                <h2 
-                    className="mt-4 text-[1.35rem] md:text-[2.7rem] font-outfit font-bold tracking-tight uppercase"
-                    style={{
-                         backgroundImage: 'linear-gradient(to right, #3b82f6, #8b5cf6, #10b981)', // Matching gradient
-                        backgroundClip: 'text',
-                        WebkitBackgroundClip: 'text',
-                        color: 'transparent',
-                        filter: 'drop-shadow(0 0 15px rgba(16, 185, 129, 0.5))'
-                    }}
-                >
-                    Hacemos tus ideas realidad
-                </h2>
-            </motion.div>
             
           </div>
 
@@ -178,19 +125,4 @@ const Hero: React.FC = () => {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 cursor-pointer text-zinc-500 hover:text-white transition-colors"
-        onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
-      >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <ChevronDown className="w-8 h-8" />
-        </motion.div>
-      </motion.div>
-    </section>
-  );
-};
-
-export default Hero;
+        transition={{ delay: 1

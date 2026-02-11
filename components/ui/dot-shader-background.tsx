@@ -100,14 +100,6 @@ const DotMaterial = shaderMaterial(
 
 extend({ DotMaterial })
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      dotMaterial: any
-    }
-  }
-}
-
 function Scene() {
   const size = useThree((s) => s.size)
   const viewport = useThree((s) => s.viewport)
@@ -144,8 +136,11 @@ function Scene() {
   const scale = Math.max(viewport.width, viewport.height) / 2
 
   return (
+    // @ts-ignore
     <mesh scale={[scale, scale, 1]} onPointerMove={onMove}>
+      {/* @ts-ignore */}
       <planeGeometry args={[2, 2]} />
+      {/* @ts-ignore */}
       <dotMaterial
         ref={materialRef}
         resolution={new THREE.Vector2(size.width * viewport.dpr, size.height * viewport.dpr)}

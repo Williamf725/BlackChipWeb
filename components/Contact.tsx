@@ -1,11 +1,15 @@
 import React from 'react';
 import { Mail, MapPin, Send } from 'lucide-react';
+import { WebGLShader } from './ui/web-gl-shader';
+import { LiquidButton } from './ui/liquid-glass-button';
 
 const Contact: React.FC = () => {
   return (
     <section id="contact" className="py-24 bg-black relative overflow-hidden">
-       {/* 1. Static Background */}
-      <div className="absolute inset-0 z-0 opacity-40 bg-zinc-900" />
+       {/* 1. WebGL Shader Background */}
+      <div className="absolute inset-0 z-0 opacity-40">
+        <WebGLShader />
+      </div>
       
       {/* Dark overlay to ensure the shader doesn't overpower the content */}
       <div className="absolute inset-0 bg-black/50 z-0 pointer-events-none" />
@@ -83,12 +87,12 @@ const Contact: React.FC = () => {
                 <textarea rows={4} className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 text-white focus:outline-none focus:border-white focus:bg-zinc-900 transition-all placeholder-zinc-700 resize-none text-lg" placeholder="Cuéntanos qué quieres lograr..."></textarea>
               </div>
 
-              <button
-                className="w-full bg-white text-black font-black uppercase tracking-widest py-5 rounded-xl flex items-center justify-center gap-3 hover:bg-zinc-200 hover:scale-[1.01] active:scale-[0.99] transition-all group"
-              >
-                <span>Enviar Propuesta</span>
-                <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </button>
+              <div className="w-full flex justify-center">
+                <LiquidButton className="w-full text-black bg-white font-black uppercase tracking-widest py-6 rounded-xl flex items-center justify-center gap-3 hover:bg-zinc-200 transition-all group border-none" size="xxl">
+                    <span>Enviar Propuesta</span>
+                    <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                </LiquidButton>
+              </div>
             </form>
           </div>
 

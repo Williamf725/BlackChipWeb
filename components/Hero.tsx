@@ -48,15 +48,13 @@ const Hero: React.FC = () => {
           <source src="https://res.cloudinary.com/dsmdtfbfd/video/upload/v1770768527/video_20260210_181218_edit_o8xisv.mp4" type="video/mp4" />
         </video>
 
-        {/* Bottom Fade Transition to Next Section */}
-        <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-black via-black/90 to-transparent z-20 pointer-events-none" />
       </div>
 
       {/* 2. Main Content */}
       <div className="relative z-30 flex flex-col items-center w-full h-full pointer-events-none">
         
-        {/* H1 - Title (Static, Space Grotesk, 85% Opacity) */}
-        <div className="absolute top-[15%] w-full flex justify-center pointer-events-auto mix-blend-overlay opacity-85 scale-y-110 origin-center">
+        {/* H1 - Title (Static, Space Grotesk, Neon White) */}
+        <div className="absolute top-[15%] w-full flex justify-center pointer-events-auto scale-y-110 origin-center drop-shadow-[0_0_25px_rgba(255,255,255,0.8)]">
              <h1 className="font-['Space_Grotesk'] font-black text-white leading-[0.85] tracking-tight text-[clamp(6.5rem,26vw,20.25rem)] select-none">
                 BKC
              </h1>

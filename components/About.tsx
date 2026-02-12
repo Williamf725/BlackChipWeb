@@ -1,13 +1,15 @@
 import React from 'react';
 import { CheckCircle2, ArrowUpRight } from 'lucide-react';
 import { STATS } from '../constants';
+import AnimatedShaderBackground from './ui/animated-shader-background';
 
 const About: React.FC = () => {
   return (
     <section id="vision" className="py-32 bg-black relative overflow-hidden">
       
-      {/* 1. Static Background (Replaces Animated Shader) */}
-      <div className="absolute inset-0 z-0 bg-zinc-950">
+      {/* 1. Animated Shader Background */}
+      <div className="absolute inset-0 z-0">
+         <AnimatedShaderBackground />
          <div className="absolute inset-0 bg-black/70 z-10" /> 
       </div>
 

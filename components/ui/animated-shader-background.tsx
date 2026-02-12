@@ -1,24 +1,22 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { Infinity, Rocket, Shield, Brain, Play, ChevronDown } from 'lucide-react';
 
 const AnimatedShaderBackground = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    
     const container = containerRef.current;
+    if (!container) return;
+
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" }); // Optimization: Disable antialias for performance, powerPreference
     
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false }); // Disable antialias for performance
-    
-    // Aggressive Performance Optimization
-    // Force pixelRatio to a max of 1.5 for performance
+    // Optimization: Clamp DPR to max 1.5
     const pixelRatio = Math.min(window.devicePixelRatio, 1.5);
-    
-    renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(pixelRatio);
+    renderer.setSize(container.clientWidth, container.clientHeight); // Use container size, not window
     container.appendChild(renderer.domElement);
 
     const material = new THREE.ShaderMaterial({
@@ -32,7 +30,7 @@ const AnimatedShaderBackground = () => {
         }
       `,
       fragmentShader: `
-        precision mediump float;
+        precision mediump float; // Optimization: Use mediump
         uniform float iTime;
         uniform vec2 iResolution;
 
@@ -74,12 +72,12 @@ const AnimatedShaderBackground = () => {
 
           float f = 2.0 + fbm(p + vec2(iTime * 5.0, 0.0)) * 0.5;
 
-          // Reduced loop count for performance if needed, but keeping visual quality for now
-          // as pixelRatio is already capped.
+          // Optimization: Reduce loop count if possible without breaking visual too much?
+          // Keeping 35 as requested but checking performance impact.
+          // For now, keeping as is but ensure mediump helps.
           for (float i = 0.0; i < 35.0; i++) {
             v = p + cos(i * i + (iTime + p.x * 0.08) * 0.025 + i * vec2(13.0, 11.0)) * 3.5 + vec2(sin(iTime * 3.0 + i) * 0.003, cos(iTime * 3.5 - i) * 0.003);
             float tailNoise = fbm(v + vec2(iTime * 0.5, i)) * 0.3 * (1.0 - (i / 35.0));
-            
             vec4 auroraColors = vec4(
               0.1 + 0.3 * sin(i * 0.2 + iTime * 0.4),
               0.3 + 0.5 * cos(i * 0.3 + iTime * 0.5),
@@ -101,35 +99,42 @@ const AnimatedShaderBackground = () => {
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 
-    let animationFrameId: number;
-    const startTime = Date.now();
+    let frameId: number;
+    let isVisible = true;
 
+    // Animation Loop
     const animate = () => {
-      const elapsedTime = (Date.now() - startTime) * 0.001;
-      material.uniforms.iTime.value = elapsedTime;
-      renderer.render(scene, camera);
-      animationFrameId = requestAnimationFrame(animate);
+      if (isVisible) {
+        material.uniforms.iTime.value += 0.016;
+        renderer.render(scene, camera);
+      }
+      frameId = requestAnimationFrame(animate);
     };
     animate();
 
+    // Optimization: Intersection Observer to pause when off-screen
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            isVisible = entry.isIntersecting;
+        });
+    }, { threshold: 0.1 }); // 10% visible to start/stop
+    observer.observe(container);
+
     const handleResize = () => {
-        if (!containerRef.current) return;
-        const newWidth = containerRef.current.clientWidth;
-        const newHeight = containerRef.current.clientHeight;
-        const newPixelRatio = Math.min(window.devicePixelRatio, 1.5);
-        
-        renderer.setPixelRatio(newPixelRatio);
-        renderer.setSize(newWidth, newHeight);
-        material.uniforms.iResolution.value.set(newWidth * newPixelRatio, newHeight * newPixelRatio);
+      if (!container) return;
+      const newPixelRatio = Math.min(window.devicePixelRatio, 1.5);
+      renderer.setPixelRatio(newPixelRatio);
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      material.uniforms.iResolution.value.set(container.clientWidth * newPixelRatio, container.clientHeight * newPixelRatio);
     };
-    
     window.addEventListener('resize', handleResize);
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      cancelAnimationFrame(frameId);
       window.removeEventListener('resize', handleResize);
+      observer.disconnect();
       if (container && container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
+          container.removeChild(renderer.domElement);
       }
       geometry.dispose();
       material.dispose();
@@ -137,7 +142,9 @@ const AnimatedShaderBackground = () => {
     };
   }, []);
 
-  return <div ref={containerRef} className="absolute inset-0 w-full h-full opacity-60 mix-blend-screen pointer-events-none" />;
+  return (
+    <div ref={containerRef} className="absolute inset-0 w-full h-full pointer-events-none mix-blend-screen" />
+  );
 };
 
 export default AnimatedShaderBackground;

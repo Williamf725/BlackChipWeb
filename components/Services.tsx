@@ -1,6 +1,7 @@
 import React from 'react';
 import { SERVICES } from '../constants';
 import { ServiceItem } from '../types';
+import { GlowingEffect } from './ui/glowing-effect';
 
 const Services: React.FC = () => {
   return (
@@ -41,6 +42,15 @@ const ServiceCard = ({ service }: ServiceCardProps) => {
   return (
     <li className="list-none min-h-[14rem] h-full">
       <div className="relative h-full rounded-[1.25rem] border border-white/10 p-2 md:rounded-[1.5rem] md:p-3 bg-zinc-950/30">
+        <GlowingEffect
+          spread={40}
+          glow={true}
+          disabled={false}
+          proximity={64}
+          inactiveZone={0.01}
+          borderWidth={2}
+          variant="default" // Using customized gold/silver default variant
+        />
         <div className="relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl border border-white/5 bg-zinc-900/50 p-6 shadow-sm transition-colors hover:bg-zinc-900/80">
           <div className="relative flex flex-1 flex-col justify-between gap-3">
             <div className="w-fit rounded-lg border border-white/10 bg-black/50 p-3 shadow-inner">

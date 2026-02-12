@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Services from './components/Services';
+import DigitalTransformation from './components/DigitalTransformation';
 import About from './components/About';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
@@ -23,7 +24,11 @@ function App() {
             No divider needed here to keep the video fade seamless. */}
         <Services />
 
-        {/* Soft gradient transition between Services and About */}
+        {/* New Transformation Section with Divider */}
+        <SectionDivider />
+        <DigitalTransformation />
+
+        {/* Soft gradient transition between Transformation and About */}
         <SectionDivider />
 
         <About />

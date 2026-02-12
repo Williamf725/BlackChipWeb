@@ -35,6 +35,7 @@ const DotMaterial = shaderMaterial(
     }
   `,
   /* glsl fragment */ `
+    precision mediump float;
     uniform float time;
     uniform int render;
     uniform vec2 resolution;
@@ -170,9 +171,8 @@ export const DotScreenShader = () => {
   const [dpr, setDpr] = useState(1); // Default to low res for safety
 
   useEffect(() => {
-    const isMobile = window.innerWidth < 768;
-    // Set appropriate DPR: 1 for mobile, clamp(1, 2) for desktop
-    setDpr(isMobile ? 1 : Math.min(window.devicePixelRatio, 2));
+    // Optimization: Clamp DPR to 1.5 to reduce GPU load while maintaining good visual quality
+    setDpr(Math.min(window.devicePixelRatio, 1.5));
   }, []);
 
   return (

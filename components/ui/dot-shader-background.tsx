@@ -6,7 +6,18 @@ import { shaderMaterial, useTrailTexture } from '@react-three/drei'
 import * as THREE from 'three'
 
 // Fix for R3F elements in TypeScript
+// Extending both global JSX and React.JSX to ensure compatibility across different React/TS versions
 declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      mesh: any
+      planeGeometry: any
+      dotMaterial: any
+    }
+  }
+}
+
+declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {
       mesh: any

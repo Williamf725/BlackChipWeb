@@ -1,11 +1,23 @@
 import React from 'react';
 import { Instagram, Twitter, Linkedin } from 'lucide-react';
+import { SparklesCore } from './ui/sparkles';
 
 const Footer: React.FC = () => {
   return (
     <footer className="bg-black border-t border-white/10 pt-20 pb-10 overflow-hidden relative">
-      {/* 1. Static Background */}
-      <div className="absolute inset-0 z-0 opacity-60 bg-zinc-950" />
+      {/* 1. Sparkles Background */}
+      <div className="absolute inset-0 z-0 h-full w-full">
+        <SparklesCore
+          id="tsparticlesfooter"
+          background="transparent"
+          minSize={0.6}
+          maxSize={1.4}
+          particleDensity={100}
+          className="w-full h-full"
+          particleColor="#FFFFFF"
+          speed={1}
+        />
+      </div>
 
       {/* Ambient background glow for footer (kept as secondary overlay) */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-lg h-32 bg-zinc-900/50 blur-[100px] pointer-events-none z-0" />

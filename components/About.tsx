@@ -1,16 +1,17 @@
 import React from 'react';
 import { CheckCircle2, ArrowUpRight } from 'lucide-react';
 import { STATS } from '../constants';
-import AnimatedShaderBackground from './ui/animated-shader-background';
+import { FloatingPaths } from './ui/background-paths';
 
 const About: React.FC = () => {
   return (
     <section id="vision" className="py-32 bg-black relative overflow-hidden">
       
-      {/* 1. Animated Shader Background */}
-      <div className="absolute inset-0 z-0">
-         <AnimatedShaderBackground />
-         <div className="absolute inset-0 bg-black/70 z-10" /> 
+      {/* 1. Background Paths */}
+      <div className="absolute inset-0 z-0 opacity-60">
+         <FloatingPaths position={1} />
+         <FloatingPaths position={-1} />
+         <div className="absolute inset-0 bg-black/80 z-10" />
       </div>
 
       {/* Decorative Elements - Kept but made subtle */}

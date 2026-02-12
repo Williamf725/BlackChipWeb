@@ -1,6 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import { GradientButton } from './ui/gradient-button';
-
 // --- STATIC TEXT COMPONENT (Optimized: Blur Removed) ---
 interface InteractiveTextProps {
   text: string;
@@ -98,46 +96,47 @@ const Hero: React.FC = () => {
       <div className="relative z-20 flex flex-col items-center w-full h-full pointer-events-none">
         
         {/* H1 */}
-        <div className="absolute top-[15%] w-full flex justify-center pointer-events-auto mix-blend-screen scale-y-110 origin-center opacity-90">
+        <div className="absolute top-[15%] w-full flex justify-center pointer-events-auto mix-blend-screen scale-y-110 origin-center opacity-100">
              <InteractiveText 
                 text="BKC"
                 maxBlur={12} 
                 radius={140} 
                 lag={0.05} 
-                className="font-['Space_Grotesk'] font-medium bg-gradient-to-b from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent leading-[0.85] tracking-tight text-[clamp(7rem,28vw,22rem)] select-none"
+                className="font-['Rubik_Glitch'] text-white leading-[0.85] tracking-tight text-[clamp(7rem,28vw,22rem)] select-none drop-shadow-[4px_4px_0px_#00f0ff] glitch-skew"
             />
         </div>
 
         {/* Subtitle */}
-        <div className="absolute top-[68%] w-full pointer-events-auto z-20 flex flex-col items-center gap-0 md:gap-[2px]">
-            <div className="text-center opacity-90">
+        <div className="absolute top-[68%] w-full pointer-events-auto z-20 flex flex-col items-center gap-2 md:gap-3">
+            <div className="text-center opacity-100">
                 <InteractiveText 
                     text="Tus ideas más ambiciosas"
                     maxBlur={3} 
                     radius={60} 
                     lag={0.1} 
-                    className="font-['Space_Grotesk'] bg-gradient-to-b from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent text-[1.425rem] md:text-[1.9rem] tracking-wide font-normal"
+                    className="font-['Share_Tech_Mono'] text-[#00f0ff] text-[1.1rem] md:text-[1.6rem] tracking-[0.15em] font-normal uppercase drop-shadow-[0_0_5px_rgba(0,240,255,0.5)]"
                 />
             </div>
             
-            <div className="text-center opacity-90">
+            <div className="text-center opacity-100">
                 <InteractiveText 
                     text="se materializan en BKC"
                     maxBlur={3}
                     radius={60}
                     lag={0.1}
-                    className="font-['Space_Grotesk'] bg-gradient-to-b from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent text-[1.18rem] md:text-[1.66rem] tracking-wide font-normal"
+                    className="font-['Share_Tech_Mono'] text-[#00f0ff] text-[0.9rem] md:text-[1.4rem] tracking-[0.15em] font-normal uppercase drop-shadow-[0_0_5px_rgba(0,240,255,0.5)]"
                 />
             </div>
         </div>
 
         {/* CTA Button */}
         <div className="absolute top-[90%] pointer-events-auto scale-[0.81]">
-            <GradientButton asChild className="h-14 px-10 text-lg shadow-[0_0_50px_-10px_rgba(255,255,255,0.3)]">
-              <a href="#contact">
-                Comienza Ahora
-              </a>
-            </GradientButton>
+            <a
+              href="#contact"
+              className="relative inline-flex items-center justify-center px-12 py-4 text-lg font-['Share_Tech_Mono'] font-bold tracking-[0.2em] text-[#00f0ff] uppercase bg-black/20 border-2 border-[#00f0ff] shadow-[0_0_20px_rgba(0,240,255,0.2)] transition-all duration-300 hover:bg-[#00f0ff]/10 hover:shadow-[0_0_40px_rgba(0,240,255,0.6)] hover:scale-105"
+            >
+              COMIENZA AHORA
+            </a>
         </div>
 
       </div>

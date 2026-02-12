@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@1,700;1,900&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@1,700;1,900&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&family=Rubik+Glitch&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
       body {
         font-family: 'Space Grotesk', sans-serif;
@@ -108,6 +108,23 @@
       .animate-float {
         animation: float 6s ease-in-out infinite;
         will-change: transform;
+      }
+
+      /* Simple Glitch Skew Animation */
+      @keyframes glitch-skew {
+        0%, 100% { transform: skew(0deg); }
+        20% { transform: skew(-10deg); }
+        21% { transform: skew(10deg); }
+        22% { transform: skew(0deg); }
+        60% { transform: skew(0deg); }
+        61% { transform: skew(5deg); }
+        62% { transform: skew(0deg); }
+      }
+
+      .glitch-skew {
+        animation: glitch-skew 4s infinite;
+        will-change: transform;
+        display: inline-block; /* Required for transform */
       }
     </style>
   <script type="importmap">

@@ -19,9 +19,9 @@ export function ShaderAnimation() {
     // Optimization: Disable antialias for background effect
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false })
     
-    // Aggressive Performance Optimization for Mobile
-    const isMobile = window.innerWidth < 768;
-    const pixelRatio = isMobile ? 1 : Math.min(window.devicePixelRatio, 2);
+    // Aggressive Performance Optimization
+    // Force pixelRatio to a max of 1.5 for performance
+    const pixelRatio = Math.min(window.devicePixelRatio, 1.5);
     
     renderer.setPixelRatio(pixelRatio)
     renderer.setSize(container.clientWidth, container.clientHeight)
@@ -45,7 +45,7 @@ export function ShaderAnimation() {
       #define TWO_PI 6.2831853072
       #define PI 3.14159265359
 
-      precision highp float;
+      precision mediump float;
       uniform vec2 resolution;
       uniform float time;
         
@@ -97,8 +97,7 @@ export function ShaderAnimation() {
     const handleResize = () => {
       if (!container) return;
       
-      const newIsMobile = window.innerWidth < 768;
-      const newPixelRatio = newIsMobile ? 1 : Math.min(window.devicePixelRatio, 2);
+      const newPixelRatio = Math.min(window.devicePixelRatio, 1.5);
       
       renderer.setPixelRatio(newPixelRatio);
       renderer.setSize(container.clientWidth, container.clientHeight);

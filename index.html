@@ -44,6 +44,16 @@
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.05);
+
+        /* Hardware Acceleration to prevent repaints */
+        will-change: transform;
+        transform: translateZ(0);
+      }
+
+      /* Promotes the navbar to its own layer */
+      nav {
+        will-change: transform;
+        transform: translateZ(0);
       }
 
       /* AGGRESSIVE MOBILE OPTIMIZATION */

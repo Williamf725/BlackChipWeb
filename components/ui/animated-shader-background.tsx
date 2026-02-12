@@ -13,9 +13,9 @@ const AnimatedShaderBackground = () => {
     
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false }); // Disable antialias for performance
     
-    // Aggressive Performance Optimization for Mobile
-    const isMobile = window.innerWidth < 768;
-    const pixelRatio = isMobile ? 1 : Math.min(window.devicePixelRatio, 2);
+    // Aggressive Performance Optimization
+    // Force pixelRatio to a max of 1.5 for performance
+    const pixelRatio = Math.min(window.devicePixelRatio, 1.5);
     
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(pixelRatio);
@@ -32,6 +32,7 @@ const AnimatedShaderBackground = () => {
         }
       `,
       fragmentShader: `
+        precision mediump float;
         uniform float iTime;
         uniform vec2 iResolution;
 
@@ -115,8 +116,7 @@ const AnimatedShaderBackground = () => {
         if (!containerRef.current) return;
         const newWidth = containerRef.current.clientWidth;
         const newHeight = containerRef.current.clientHeight;
-        const newIsMobile = window.innerWidth < 768;
-        const newPixelRatio = newIsMobile ? 1 : Math.min(window.devicePixelRatio, 2);
+        const newPixelRatio = Math.min(window.devicePixelRatio, 1.5);
         
         renderer.setPixelRatio(newPixelRatio);
         renderer.setSize(newWidth, newHeight);

@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
               <img
                 src="https://res.cloudinary.com/dsmdtfbfd/image/upload/v1770773088/BLACKCHIP_COIN_viw7qw.jpg" 
                 alt="Black Chip Coin"
-                className="w-11 h-11 rounded-full object-cover relative z-10 border border-white/10"
+                className="w-11 h-11 rounded-full object-cover relative z-10 border border-white/10 animate-float"
               />
           </div>
           <div className="flex flex-col justify-center">

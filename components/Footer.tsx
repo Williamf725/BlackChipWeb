@@ -35,7 +35,7 @@ const Footer: React.FC = () => {
                  <img 
                     src="https://res.cloudinary.com/dsmdtfbfd/image/upload/v1770773088/BLACKCHIP_COIN_viw7qw.jpg" 
                     alt="Black Chip Coin" 
-                    className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-2 border-white/10 shadow-[0_0_40px_rgba(255,255,255,0.05)]"
+                    className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-2 border-white/10 shadow-[0_0_40px_rgba(255,255,255,0.05)] animate-float"
                  />
               </div>
 

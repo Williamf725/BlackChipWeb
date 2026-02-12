@@ -34,7 +34,7 @@ const Hero: React.FC = () => {
       {/* 1. Background Video Container */}
       <div className="absolute top-0 left-0 w-full h-full z-0 overflow-hidden">
         {/* Dark overlay for video readability */}
-        <div className="absolute inset-0 bg-black/40 z-10" />
+        <div className="absolute inset-0 bg-black/30 z-10" />
         <video 
           ref={videoRef}
           autoPlay 
@@ -42,7 +42,7 @@ const Hero: React.FC = () => {
           muted 
           playsInline 
           preload="auto"
-          className="w-full h-full object-cover opacity-80"
+          className="w-full h-full object-cover opacity-90"
           style={{ willChange: "transform" }}
         >
           <source src="https://res.cloudinary.com/dsmdtfbfd/video/upload/v1770768527/video_20260210_181218_edit_o8xisv.mp4" type="video/mp4" />

@@ -1,34 +1,24 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { CheckCircle2, ArrowUpRight } from 'lucide-react';
 import { STATS } from '../constants';
-import AnimatedShaderBackground from './ui/animated-shader-background';
 
 const About: React.FC = () => {
   return (
     <section id="vision" className="py-32 bg-black relative overflow-hidden">
       
-      {/* 1. Animated Shader Background (Behind Text) */}
-      <div className="absolute inset-0 z-0">
-         <AnimatedShaderBackground />
-         {/* Overlay to ensure text readability if shader is too bright */}
+      {/* 1. Static Background (Replaces Animated Shader) */}
+      <div className="absolute inset-0 z-0 bg-zinc-950">
          <div className="absolute inset-0 bg-black/70 z-10" /> 
       </div>
 
-      {/* Decorative Elements - Kept but made subtle to blend with shader */}
+      {/* Decorative Elements - Kept but made subtle */}
       <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-indigo-900/10 rounded-full blur-[120px] z-0 mix-blend-screen" />
 
       <div className="container mx-auto px-4 relative z-20">
         <div className="flex flex-col lg:flex-row items-center gap-20">
           
           {/* Left Content */}
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="flex-1 space-y-10"
-          >
+          <div className="flex-1 space-y-10">
             <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 w-fit backdrop-blur-md">
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -52,12 +42,8 @@ const About: React.FC = () => {
                 { title: "ROI Obsesivo", desc: "Cada pixel está diseñado para vender más." },
                 { title: "Velocidad Supersónica", desc: "Lanzamientos en tiempo récord con calidad de estudio." }
               ].map((item, i) => (
-                <motion.div 
+                <div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + (i * 0.1) }}
-                  viewport={{ once: true }}
                   className="flex items-start gap-5 group"
                 >
                   <div className="p-2 rounded-lg bg-zinc-900/80 border border-zinc-800 group-hover:border-white/30 transition-colors backdrop-blur-sm">
@@ -67,26 +53,18 @@ const About: React.FC = () => {
                     <h4 className="text-white font-bold text-lg group-hover:text-zinc-200 transition-colors">{item.title}</h4>
                     <p className="text-zinc-400 text-sm leading-relaxed">{item.desc}</p>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* Right Content - Stats */}
-          <motion.div 
-            id="stats"
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="flex-1 w-full"
-          >
+          <div id="stats" className="flex-1 w-full">
             <div className="grid grid-cols-2 gap-4">
               {STATS.map((stat, i) => (
-                <motion.div 
+                <div
                   key={i}
-                  whileHover={{ y: -5, backgroundColor: "rgba(255,255,255,0.08)" }}
-                  className="glass-panel p-8 rounded-3xl flex flex-col items-center justify-center text-center cursor-default transition-all duration-300 bg-black/40"
+                  className="glass-panel p-8 rounded-3xl flex flex-col items-center justify-center text-center cursor-default transition-all duration-300 bg-black/40 hover:bg-white/5 hover:-translate-y-1"
                 >
                   <span className="text-4xl md:text-6xl font-black text-white mb-2 tracking-tighter">
                     {stat.value}
@@ -94,14 +72,11 @@ const About: React.FC = () => {
                   <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-zinc-500">
                     {stat.label}
                   </span>
-                </motion.div>
+                </div>
               ))}
             </div>
             
-            <motion.div 
-              whileHover={{ scale: 1.02 }}
-              className="mt-6 p-8 bg-gradient-to-r from-zinc-900/80 to-black/80 rounded-3xl border border-white/10 relative overflow-hidden group backdrop-blur-md"
-            >
+            <div className="mt-6 p-8 bg-gradient-to-r from-zinc-900/80 to-black/80 rounded-3xl border border-white/10 relative overflow-hidden group backdrop-blur-md hover:scale-[1.02] transition-transform duration-300">
                <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-40 transition-opacity">
                  <ArrowUpRight className="w-20 h-20 text-white" />
                </div>
@@ -115,8 +90,8 @@ const About: React.FC = () => {
                    <p className="text-xs text-zinc-500">Global Agency</p>
                  </div>
                </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
         </div>
       </div>

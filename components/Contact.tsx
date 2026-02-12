@@ -1,25 +1,17 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, ArrowRight, Send } from 'lucide-react';
-import { ShaderAnimation } from './ui/shader-lines';
+import { Mail, MapPin, Send } from 'lucide-react';
 
 const Contact: React.FC = () => {
   return (
     <section id="contact" className="py-24 bg-black relative overflow-hidden">
-       {/* 1. New Shader Background */}
-      <div className="absolute inset-0 z-0 opacity-40">
-        <ShaderAnimation />
-      </div>
+       {/* 1. Static Background */}
+      <div className="absolute inset-0 z-0 opacity-40 bg-zinc-900" />
       
       {/* Dark overlay to ensure the shader doesn't overpower the content */}
       <div className="absolute inset-0 bg-black/50 z-0 pointer-events-none" />
 
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div 
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+        <div
           className="max-w-5xl mx-auto rounded-[2.5rem] overflow-hidden bg-zinc-900/50 backdrop-blur-md border border-white/5 flex flex-col lg:flex-row shadow-2xl"
         >
           
@@ -91,18 +83,16 @@ const Contact: React.FC = () => {
                 <textarea rows={4} className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl p-4 text-white focus:outline-none focus:border-white focus:bg-zinc-900 transition-all placeholder-zinc-700 resize-none text-lg" placeholder="Cuéntanos qué quieres lograr..."></textarea>
               </div>
 
-              <motion.button 
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-                className="w-full bg-white text-black font-black uppercase tracking-widest py-5 rounded-xl flex items-center justify-center gap-3 hover:bg-zinc-200 transition-all group"
+              <button
+                className="w-full bg-white text-black font-black uppercase tracking-widest py-5 rounded-xl flex items-center justify-center gap-3 hover:bg-zinc-200 hover:scale-[1.01] active:scale-[0.99] transition-all group"
               >
                 <span>Enviar Propuesta</span>
                 <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </motion.button>
+              </button>
             </form>
           </div>
 
-        </motion.div>
+        </div>
       </div>
     </section>
   );

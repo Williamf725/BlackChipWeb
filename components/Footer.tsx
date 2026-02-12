@@ -1,15 +1,11 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Instagram, Twitter, Linkedin } from 'lucide-react';
-import { DotScreenShader } from './ui/dot-shader-background';
 
 const Footer: React.FC = () => {
   return (
     <footer className="bg-black border-t border-white/10 pt-20 pb-10 overflow-hidden relative">
-      {/* 1. Background Shader Effect */}
-      <div className="absolute inset-0 z-0 opacity-60">
-        <DotScreenShader />
-      </div>
+      {/* 1. Static Background */}
+      <div className="absolute inset-0 z-0 opacity-60 bg-zinc-950" />
 
       {/* Ambient background glow for footer (kept as secondary overlay) */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-lg h-32 bg-zinc-900/50 blur-[100px] pointer-events-none z-0" />
@@ -20,18 +16,7 @@ const Footer: React.FC = () => {
             
             {/* Large Animated Logo */}
             <div className="flex items-center gap-6 mb-8">
-              <motion.div
-                animate={{ 
-                  y: [-10, 10, -10], // Floating up and down
-                  rotate: [0, 5, -5, 0] // Subtle tilt
-                }}
-                transition={{ 
-                  duration: 6, 
-                  repeat: Infinity, 
-                  ease: "easeInOut" 
-                }}
-                className="relative"
-              >
+              <div className="relative">
                  {/* Shadow casting below the coin to enhance levitation */}
                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-20 h-4 bg-black/80 blur-lg rounded-full"></div>
                  
@@ -40,7 +25,7 @@ const Footer: React.FC = () => {
                     alt="Black Chip Coin" 
                     className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-2 border-white/10 shadow-[0_0_40px_rgba(255,255,255,0.05)]"
                  />
-              </motion.div>
+              </div>
 
               <div className="flex flex-col">
                 <span className="text-4xl md:text-5xl font-black tracking-tighter text-white">BKC</span>

@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef } from 'react';
 import { GradientButton } from './ui/gradient-button';
 
 // --- STATIC TEXT COMPONENT (Optimized: Blur Removed) ---
@@ -111,12 +110,7 @@ const Hero: React.FC = () => {
 
         {/* Subtitle */}
         <div className="absolute top-[68%] w-full pointer-events-auto z-20 flex flex-col items-center gap-0 md:gap-[2px]">
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 0.9, y: 0 }}
-                transition={{ duration: 1, delay: 0.2 }}
-                className="text-center"
-            >
+            <div className="text-center opacity-90">
                 <InteractiveText 
                     text="Tus ideas más ambiciosas"
                     maxBlur={3} 
@@ -124,14 +118,9 @@ const Hero: React.FC = () => {
                     lag={0.1} 
                     className="font-['Space_Grotesk'] bg-gradient-to-b from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent text-[1.425rem] md:text-[1.9rem] tracking-wide font-normal"
                 />
-            </motion.div>
+            </div>
             
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 0.9, y: 0 }}
-                transition={{ duration: 1, delay: 0.4 }} 
-                className="text-center"
-            >
+            <div className="text-center opacity-90">
                 <InteractiveText 
                     text="se materializan en BKC"
                     maxBlur={3}
@@ -139,24 +128,17 @@ const Hero: React.FC = () => {
                     lag={0.1}
                     className="font-['Space_Grotesk'] bg-gradient-to-b from-white via-zinc-200 to-zinc-600 bg-clip-text text-transparent text-[1.18rem] md:text-[1.66rem] tracking-wide font-normal"
                 />
-            </motion.div>
+            </div>
         </div>
 
         {/* CTA Button */}
-        <motion.div
-            initial={{ opacity: 0, scale: 0.7 }}
-            animate={{ opacity: 1, scale: 0.81 }} 
-            whileHover={{ scale: 0.85 }}
-            whileTap={{ scale: 0.78 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="absolute top-[90%] pointer-events-auto"
-        >
+        <div className="absolute top-[90%] pointer-events-auto scale-[0.81]">
             <GradientButton asChild className="h-14 px-10 text-lg shadow-[0_0_50px_-10px_rgba(255,255,255,0.3)]">
               <a href="#contact">
                 Comienza Ahora
               </a>
             </GradientButton>
-        </motion.div>
+        </div>
 
       </div>
 

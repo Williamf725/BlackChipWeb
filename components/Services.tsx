@@ -2,12 +2,15 @@ import React from 'react';
 import { SERVICES } from '../constants';
 import { ServiceItem } from '../types';
 import { GlowingEffect } from './ui/glowing-effect';
+import { AnimatedHeroBackground } from './ui/animated-hero-background';
 
 const Services: React.FC = () => {
   return (
     <section id="services" className="py-32 bg-black relative overflow-hidden">
-      {/* Decorative background element - Darkened for high contrast with glowing cards */}
-      <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-zinc-900/20 blur-[120px] rounded-full pointer-events-none" />
+      {/* Animated Hero Shader Background */}
+      <div className="absolute inset-0 z-0">
+        <AnimatedHeroBackground />
+      </div>
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-24">

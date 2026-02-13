@@ -44,7 +44,7 @@ const NotFound: React.FC = () => {
           ref={imageRef}
           src="https://res.cloudinary.com/dvpnkr2i9/image/upload/v1771016492/unnamed_ll8rp6.png"
           alt="404 Not Found"
-          className="max-w-full max-h-full object-contain drop-shadow-2xl"
+          className="max-w-[85%] max-h-[85vh] object-contain drop-shadow-2xl"
           draggable={false}
         />
 

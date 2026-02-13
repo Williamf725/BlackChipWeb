@@ -44,7 +44,7 @@ const OfflineOverlay: React.FC<OfflineOverlayProps> = ({ onEnterOfflineMode }) =
           ref={imageRef}
           src="https://res.cloudinary.com/dvpnkr2i9/image/upload/v1771016493/unnamed_1_kcihqq.png"
           alt="Conexión Interrumpida"
-          className="max-w-full max-h-full object-contain drop-shadow-2xl select-none"
+          className="max-w-[85%] max-h-[85vh] object-contain drop-shadow-2xl select-none"
           draggable={false}
         />
 

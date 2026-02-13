@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import errorConexionImage from '../assets/images/ErrorConexionimage.png';
 import OfflineModal from '../components/OfflineModal';
 
 const Offline: React.FC = () => {
@@ -9,7 +8,7 @@ const Offline: React.FC = () => {
     <>
       <div
         className="relative w-full h-screen bg-black overflow-hidden bg-cover bg-center"
-        style={{ backgroundImage: `url(${errorConexionImage})` }}
+        style={{ backgroundImage: `url(https://res.cloudinary.com/dvpnkr2i9/image/upload/v1771016493/unnamed_1_kcihqq.png)` }}
       >
         {/* Invisible Overlay Button - Positioned approx bottom 15% */}
         <div

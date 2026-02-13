@@ -1,6 +1,5 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import error404Image from '../assets/images/Error404image.png';
 
 const NotFound: React.FC = () => {
   const navigate = useNavigate();
@@ -8,7 +7,7 @@ const NotFound: React.FC = () => {
   return (
     <div
       className="relative w-full h-screen bg-black overflow-hidden bg-cover bg-center"
-      style={{ backgroundImage: `url(${error404Image})` }}
+      style={{ backgroundImage: `url(https://res.cloudinary.com/dvpnkr2i9/image/upload/v1771016492/unnamed_ll8rp6.png)` }}
     >
       {/* Invisible Overlay Button - Positioned approx bottom 15% */}
       <div

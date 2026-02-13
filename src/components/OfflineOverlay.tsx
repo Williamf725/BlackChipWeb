@@ -1,11 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-const NotFound: React.FC = () => {
-  const navigate = useNavigate();
+interface OfflineOverlayProps {
+  onEnterOfflineMode: () => void;
+}
+
+const OfflineOverlay: React.FC<OfflineOverlayProps> = ({ onEnterOfflineMode }) => {
   const imageRef = useRef<HTMLImageElement>(null);
-
-  // Dimensions of the actual rendered image
   const [imgDim, setImgDim] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const NotFound: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full h-screen bg-black flex items-center justify-center overflow-hidden">
+    <div className="fixed inset-0 z-[9999] bg-black flex items-center justify-center overflow-hidden animate-in fade-in duration-300">
       {/*
         This container centers the image.
         The image uses object-contain to never be cropped.
@@ -42,9 +42,9 @@ const NotFound: React.FC = () => {
       <div className="relative flex items-center justify-center w-full h-full p-4 md:p-8">
         <img
           ref={imageRef}
-          src="https://res.cloudinary.com/dvpnkr2i9/image/upload/v1771016492/unnamed_ll8rp6.png"
-          alt="404 Not Found"
-          className="max-w-full max-h-full object-contain drop-shadow-2xl"
+          src="https://res.cloudinary.com/dvpnkr2i9/image/upload/v1771016493/unnamed_1_kcihqq.png"
+          alt="Conexión Interrumpida"
+          className="max-w-full max-h-full object-contain drop-shadow-2xl select-none"
           draggable={false}
         />
 
@@ -62,19 +62,19 @@ const NotFound: React.FC = () => {
           >
             {/* The actual clickable area */}
             <div
-              onClick={() => navigate('/')}
+              onClick={onEnterOfflineMode}
               className="absolute left-1/2 -translate-x-1/2 cursor-pointer hover:bg-white/5 rounded-xl transition-colors pointer-events-auto"
               style={{
                 bottom: '14%', // Tuned to align with the drawn button
                 width: '32%',  // Width of the button area
                 height: '10%'  // Height of the button area
               }}
-              aria-label="Regresar al Inicio"
+              aria-label="Ver información offline"
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
-                  navigate('/');
+                  onEnterOfflineMode();
                 }
               }}
             />
@@ -85,4 +85,4 @@ const NotFound: React.FC = () => {
   );
 };
 
-export default NotFound;
+export default OfflineOverlay;

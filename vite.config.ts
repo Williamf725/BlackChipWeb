@@ -63,6 +63,18 @@ export default defineConfig({
               },
             },
           },
+          {
+            // Cache Cloudinary images for 404/Offline pages
+            urlPattern: ({ url }) => url.origin === 'https://res.cloudinary.com',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'cloudinary-images',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 Days
+              },
+            },
+          },
         ],
       },
     }),
